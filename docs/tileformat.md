@@ -10,4 +10,4 @@ MBTiles is a specification for storing arbitrary tiled map data in SQLite databa
 
 ## Flow
 SQL Query -> Zoom Level , x, y
-          -> Tile Data
+          -> Tile Data -> GZIP Uncompress -> 
