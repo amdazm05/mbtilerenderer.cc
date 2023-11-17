@@ -14,7 +14,7 @@ namespace utils
         }
         return std::nullopt;
     }
-    std::optional<std::string> compress(std::string & s)
+    std::optional<std::string> ComDecompressor::compress(std::string & s)
     {
         std::string res;
         try
@@ -27,7 +27,7 @@ namespace utils
         }
         return std::move(res);
     }
-    inline bool isCompressed(std::shared_ptr<uint8_t> data,std::size_t datalen)
+    bool ComDecompressor::isCompressed(std::shared_ptr<uint8_t> data,std::size_t datalen)
     {
         return gzip::is_compressed(
             reinterpret_cast<const char *>(data.get())

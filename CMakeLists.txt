@@ -27,6 +27,7 @@ target_link_libraries(mbtiletest
   SQLiteCpp
   sqlite3
   pthread
+  z
   mbrenderer
 )
 
@@ -35,6 +36,7 @@ target_link_libraries(decomtest
   SQLiteCpp
   sqlite3
   pthread
+  z
   mbrenderer
 )
 
