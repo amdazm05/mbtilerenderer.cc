@@ -1,4 +1,4 @@
-#include <util/decompressor.hpp>
+#include <util/compressdecompressor.hpp>
 
 namespace utils
 {
@@ -13,6 +13,19 @@ namespace utils
             return std::move(decompressed_data);
         }
         return std::nullopt;
+    }
+    std::optional<std::string> compress(std::string & s)
+    {
+        std::string res;
+        try
+        {
+            res = gzip::compress(reinterpret_cast<const char *>(s.data()),s.length());
+        }
+        catch(const std::exception& e)
+        {
+            return std::nullopt;
+        }
+        return std::move(res);
     }
     inline bool isCompressed(std::shared_ptr<uint8_t> data,std::size_t datalen)
     {

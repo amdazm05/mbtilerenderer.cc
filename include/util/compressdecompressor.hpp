@@ -18,8 +18,9 @@ namespace utils
             ComDecompressor()=default;
             ~ComDecompressor()=default;
         public:
-            std::optional<std::string> 
-                decompress(std::shared_ptr<uint8_t> compressed_pointer ,std::size_t datalen);
+            std::optional<std::string> decompress
+                (std::shared_ptr<uint8_t> compressed_pointer ,std::size_t datalen);
+            std::optional<std::string> compress(std::string & s);
         private:
             bool isCompressed(std::shared_ptr<uint8_t> data,std::size_t datalen);
     };

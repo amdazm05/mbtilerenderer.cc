@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
+set(CXX_STANDARD 20)
 project(mbrenderer)
 add_subdirectory(${CMAKE_SOURCE_DIR}/third-party/SQLiteCpp)
 file(COPY ${CMAKE_SOURCE_DIR}/sample 
@@ -21,11 +22,20 @@ add_library(mbrenderer STATIC ${SRC_MB}
 target_include_directories(mbrenderer PUBLIC
   ${CMAKE_SOURCE_DIR}/include/
 )
-add_executable(mbtiletest ${CMAKE_SOURCE_DIR}/test/mbtiletest.cc)
+add_executable(mbtiletest ${CMAKE_SOURCE_DIR}/test/mbtilesearchtiletest.cc)
 target_link_libraries(mbtiletest
   SQLiteCpp
   sqlite3
   pthread
   mbrenderer
 )
+
+add_executable(decomtest ${CMAKE_SOURCE_DIR}/test/decompressortest.cc)
+target_link_libraries(decomtest
+  SQLiteCpp
+  sqlite3
+  pthread
+  mbrenderer
+)
+
 
