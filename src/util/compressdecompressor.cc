@@ -10,7 +10,7 @@ namespace utils
             std::string decompressed_data = gzip::decompress(
                 reinterpret_cast<const char *>(compressed_pointer.get())
                 ,datalen);
-            return std::move(decompressed_data);
+            return decompressed_data;
         }
         return std::nullopt;
     }
