@@ -3,6 +3,10 @@
 
 #include <unordered_map>
 #include <memory>
+#include <iterator>
+#include <list>
+#include <optional>
+
 // Some tests here
 //@TODO extensive testing required
 // https://godbolt.org/z/nssfqj187
@@ -15,8 +19,7 @@ class lru_cache
         std::list<dataType> data_list_;
         std::unordered_map<key,list_iterator> umap_; // key -> datatype
     public:
-        // lru_cache();
-        // ~lru_cache();
+        lru_cache()=default;
         std::optional<dataType> get(key searchKey)
         {
             if(umap_.find(searchKey)!=umap_.end())
