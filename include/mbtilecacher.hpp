@@ -3,6 +3,7 @@
 
 // STL 
 #include <iostream>
+#include <memory>
 
 //DS
 #include <datastructures/lrucache.tpp>
@@ -19,7 +20,8 @@ namespace mbtile
     class MbTileCacher 
     {
         private:
-            SQLite::Database db;
+            SQLite::Database db_;
+            utils::ComDecompressor comdecomObj_;
         public:
             MbTileCacher()=delete;
             MbTileCacher(std::string && path);

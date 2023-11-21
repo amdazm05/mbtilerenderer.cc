@@ -41,4 +41,8 @@ target_link_libraries(decomtest PUBLIC
   mbrenderer
 )
 
+add_executable(mbtilecachetest ${CMAKE_SOURCE_DIR}/test/mbtilecachertest.cc)
+target_link_libraries(mbtilecachetest PUBLIC
+  mbrenderer
+)
 

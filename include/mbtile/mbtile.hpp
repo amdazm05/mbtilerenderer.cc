@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <unordered_map>
 
 namespace mbtile
 {
@@ -13,26 +14,25 @@ namespace mbtile
         public:
             std::size_t tile_col;
             std::size_t tile_row;
-            std::shared_ptr<uint8_t> bitmap_image;
+            std::size_t zoom_level;
+            std::shared_ptr<char> pbtile;
         public:
             /// @brief Constructors
-            tile_t():tile_t(0,0){}
-            tile_t(std::size_t tile_col,std::size_t tile_row):
+            tile_t():tile_t(0,0,0){}
+            tile_t(std::size_t tile_col,std::size_t tile_row,std::size_t zoom_level):
                 tile_col(tile_col),
-                tile_row(tile_row)
+                tile_row(tile_row),
+                zoom_level(zoom_level)
             {}
     };
 
-    class tilezoom_t
+    class tiledef_t
     {
         public:
-            std::vector<tile_t> tiles;
-            std::size_t zoom_level;
+            std::unordered_map<std::size_t,tile_t> umap;
         public:
             /// @brief Constructors
-            tilezoom_t():tilezoom_t(0){}
-            tilezoom_t(std::size_t zoom_level):
-                zoom_level(zoom_level){}
+            tiledef_t(){}
     };
 }
 
