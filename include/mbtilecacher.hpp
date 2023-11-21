@@ -4,21 +4,33 @@
 // STL 
 #include <iostream>
 
+//DS
+#include <datastructures/lrucache.tpp>
+
 //Local
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <mbtile/mbtile.hpp>
 #include <util/compressdecompressor.hpp>
 
-class MbTileCacher 
+namespace mbtile
 {
-    private:
-        std::vector<mbtile::tile_t> tilecache_;
-        SQLite::Database db;
-        SQLite::Statement query_statement_;
-    public:
-        MbTileCacher()=delete;
-        MbTileCacher(std::string && path);
-        ~MbTileCacher();
-};
+    /// @brief A class that contains references to map tiles
+    /// This should be complemented as being an LRU cache
+    class MbTileCacher 
+    {
+        private:
+            SQLite::Database db;
+        public:
+            MbTileCacher()=delete;
+            MbTileCacher(std::string && path);
+            ~MbTileCacher();
+            bool query_tile(std::size_t zoomlevel,std::size_t x,std::size_t y);
+    };
+}
 
+// Cache recently used tiles and not all searched in the DB
+//Implementing our own LRU cache
+// std::vector<mbtile::tile_t> tilecache_;
+// Great Article
+// https://stackoverflow.com/questions/36822571/when-we-should-use-lru-cache-is-this-a-best-solution
 #endif //_MB_TILE_CACHER
