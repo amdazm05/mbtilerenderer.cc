@@ -2,14 +2,13 @@
 
 namespace utils
 {
-    std::optional<std::string> ComDecompressor::decompress(std::weak_ptr<char> compressed_pointer 
+    std::optional<std::string> ComDecompressor::decompress(char * compressed_pointer 
         ,std::size_t datalen)
     {
-        std::shared_ptr<char> compressed_pointer_ = compressed_pointer.lock();
-        if(isCompressed(compressed_pointer_,datalen))
+        if(isCompressed(compressed_pointer,datalen))
         {
             std::string decompressed_data = gzip::decompress(
-                compressed_pointer_.get()
+                compressed_pointer
                 ,datalen);
             return decompressed_data;
         }
@@ -28,10 +27,10 @@ namespace utils
         }
         return res;
     }
-    bool ComDecompressor::isCompressed(std::shared_ptr<char> data,std::size_t datalen)
+    bool ComDecompressor::isCompressed(char * data,std::size_t datalen)
     {
         return gzip::is_compressed(
-            data.get()
+            data
             ,datalen);
     }
 }
