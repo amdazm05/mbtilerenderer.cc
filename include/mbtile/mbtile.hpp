@@ -15,7 +15,7 @@ namespace mbtile
             std::size_t tile_col;
             std::size_t tile_row;
             std::size_t zoom_level;
-            std::shared_ptr<char> pbtile;
+            std::string pbtile;
         public:
             /// @brief Constructors
             tile_t():tile_t(0,0,0){}

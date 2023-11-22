@@ -4,7 +4,6 @@
 // STL 
 #include <iostream>
 #include <memory>
-
 //DS
 #include <datastructures/lrucache.tpp>
 
@@ -22,6 +21,7 @@ namespace mbtile
         private:
             SQLite::Database db_;
             utils::ComDecompressor comdecomObj_;
+            lru_cache<std::string,mbtile::tile_t> lrucache_;
         public:
             MbTileCacher()=delete;
             MbTileCacher(std::string && path);

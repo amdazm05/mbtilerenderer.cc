@@ -17,23 +17,31 @@ namespace mbtile
                 std::to_string(zoomlevel) + " AND  tile_column =" 
                 +std::to_string(row)+ " AND tile_row ="
                 +std::to_string(column)+";";
+        bool check = false;
         try
         {
             SQLite::Statement statment(this->db_,std::move(query));
             mbtile::tile_t tile;
             while(statment.executeStep())
             {
-                std::shared_ptr<char> compressed_blob((char *)statment.getColumn(0).getBlob());
                 std::size_t datalen = statment.getColumn(0).getBytes();
-                tile.pbtile = std::shared_ptr<char>(
-                    comdecomObj_.decompress(std::weak_ptr<char>(compressed_blob),datalen).value().data());
+                std::string result =
+                    comdecomObj_.decompress((char *)statment.getColumn(0).getBlob(),datalen).value_or("");
+                tile.tile_col = column;
+                tile.tile_row = row;
+                tile.pbtile = std::move(result);
+                //Caches the tiles
+                lrucache_.add(std::to_string(zoomlevel)+"/"+
+                    std::to_string(row)+"/"+
+                    std::to_string(column),std::move(tile));
+                check = true;
             }
         }
         catch(std::exception & e)
         {
             std::cerr<<e.what()<<std::endl;
         }
-        return {};
+        return check;
     }
 }
 

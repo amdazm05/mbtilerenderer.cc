@@ -3,7 +3,8 @@
 
 int main()
 {
-    mbtile::MbTileCacher cacher("./sample/countries-raster.mbtiles");
-    cacher.query_tile(1,0,1);
+    mbtile::MbTileCacher cacher("./sample/islamabad.mbtiles");
+    if(cacher.query_tile(14,11481,9827))
+        std::cout<<"TEST PASSED";
     return {};
 }
