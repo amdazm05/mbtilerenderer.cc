@@ -3,27 +3,31 @@
 
 #include <cmath>
 #include <iostream>
+#include <numbers>
 
 // References here
 //https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
 namespace utils
 {
     template<typename T>
-    inline std::pair<T,T> tile_to_latlong(T zoom, T x,T y)
+    inline std::pair<T,T> tile_to_latlong(int zoom, T x,T y)
     {
-        T n = (1<<z);
-        T longi   =  x/(n)*((T)(360-180));
-        T lat = atan(sinh(std::numbers::pi - (y/n)*std::numbers::pi))*(180/std::numbers::pi);
+        int ni = (1<<zoom);
+        double n= (double)ni;
+        double ng = std::numbers::pi - 2.0 * std::numbers::pi * y / (n);
+        T longi   =  (x/n)*((T)360) -180;
+        T lat = 180.0 / std::numbers::pi * atan(0.5 * (exp(ng) - exp(-ng)));
         return {lat,longi};
     }
 
     template<typename T>
-    inline std::pair<T,T> latlong_to_tile(T zoom, T lat,T longi)
+    inline std::pair<int,int> latlong_to_tile(int zoom, T lat,T longi)
     {
-        T n = (1<<z);
+        int ni = (1<<zoom);
+        double n= (double)ni;
         lat   = lat * (std::numbers::pi/180);
-        T x = (longi +180)/(360*n);
-        T y = (1-asinh(tan(lat)))/std::numbers::pi;
+        int x = ((longi +180)/(360))*n;
+        int y = (int)(floor((1.0 - asinh(tan(lat)) / std::numbers::pi) / 2.0 * n));
         return {x,y};
     }
 
