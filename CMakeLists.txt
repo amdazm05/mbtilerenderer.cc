@@ -8,6 +8,7 @@ DESTINATION ${CMAKE_BINARY_DIR})
 include_directories(
   ${CMAKE_SOURCE_DIR}/third-party/stb/
   ${CMAKE_SOURCE_DIR}/third-party/gzip-hpp/include/
+  ${CMAKE_SOURCE_DIR}/include/
 )
 file(GLOB SRC_MB
 ${PROJECT_SOURCE_DIR}/src/*.cpp
@@ -46,3 +47,7 @@ target_link_libraries(mbtilecachetest PUBLIC
   mbrenderer
 )
 
+add_executable(conversiontest ${CMAKE_SOURCE_DIR}/test/conversiontest.cc)
+target_link_libraries(conversiontest PUBLIC
+  mbrenderer
+)

@@ -19,7 +19,7 @@ namespace utils
         std::string res;
         try
         {
-            res = gzip::compress(reinterpret_cast<const char *>(s.data()),s.length());
+            res = gzip::compress(static_cast<const char *>(s.data()),s.length());
         }
         catch(const std::exception& e)
         {
