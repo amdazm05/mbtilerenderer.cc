@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
-set(CXX_STANDARD 20)
 project(mbrenderer)
-
+set(CMAKE_CXX_FLAGS "-std=c++20")
 add_subdirectory(${CMAKE_SOURCE_DIR}/third-party/SQLiteCpp)
 file(COPY ${CMAKE_SOURCE_DIR}/sample 
 DESTINATION ${CMAKE_BINARY_DIR})
