@@ -16,7 +16,7 @@ namespace mbtile
 {
     /// @brief A class that contains references to map tiles
     /// This should be complemented as being an LRU cache
-    class MbTileCacher 
+    class MbTileCacher : std::enable_shared_from_this<MbTileCacher>
     {
         private:
             SQLite::Database db_;
