@@ -1,5 +1,5 @@
 #include <util/conversions.tpp>
-
+#include <vector_tile.pb.h>
 int main()
 {
     auto answer = utils::tile_to_latlong<double>(1,0,1);

@@ -1,6 +1,24 @@
 cmake_minimum_required(VERSION 3.12)
 project(mbrenderer)
-set(CMAKE_CXX_FLAGS "-std=c++20")
+set(CMAKE_CXX_FLAGS "-std=c++20 -Wno-dev")
+set(proto_path ${CMAKE_SOURCE_DIR}/third-party/vector-tile-spec/2.1/)
+set(destination_dir  ${CMAKE_SOURCE_DIR}/proto/)
+option(PROTO_COMPILE 0)
+include(FindProtobuf)
+
+if(PROTO_COMPILE)
+  execute_process(
+      COMMAND protoc vector_tile.proto --proto_path=${proto_path} --cpp_out ${destination_dir}
+      RESULT_VARIABLE result
+  )
+  if(result EQUAL 0)
+      message(STATUS "Proto - Code generation completed successfully!")
+  else()
+      message(WARNING "PROTO - Code generation failed with error code: ${result}")
+  endif()
+endif()
+
+include_directories(${CMAKE_SOURCE_DIR}/proto/)
 add_subdirectory(${CMAKE_SOURCE_DIR}/third-party/SQLiteCpp)
 file(COPY ${CMAKE_SOURCE_DIR}/sample 
 DESTINATION ${CMAKE_BINARY_DIR})
@@ -29,6 +47,7 @@ target_link_libraries(mbrenderer
   sqlite3
   pthread
   z
+  ${PROTOBUF_LIBRARIES}
 )
 add_executable(mbtiletest ${CMAKE_SOURCE_DIR}/test/mbtilesearchtiletest.cc)
 target_link_libraries(mbtiletest
