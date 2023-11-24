@@ -7,3 +7,6 @@
 [submodule "third-party/gzip-hpp"]
 	path = third-party/gzip-hpp
 	url = https://github.com/mapbox/gzip-hpp.git
+[submodule "third-party/vector-tile-spec"]
+	path = third-party/vector-tile-spec
+	url = https://github.com/mapbox/vector-tile-spec.git
