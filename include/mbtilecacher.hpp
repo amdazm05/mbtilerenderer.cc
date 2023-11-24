@@ -4,6 +4,7 @@
 // STL 
 #include <iostream>
 #include <memory>
+#include <optional>
 //DS
 #include <datastructures/lrucache.tpp>
 
@@ -27,6 +28,8 @@ namespace mbtile
             MbTileCacher(std::string && path);
             ~MbTileCacher();
             bool query_tile(std::size_t zoomlevel,std::size_t x,std::size_t y);
+            std::optional<mbtile::tile_t> fetch_mb_tile(std::size_t zoomlevel, std::size_t x,std::size_t y); 
+            mbtile::tile_t fetch_mb_tile(std::size_t zoomlevel,  double lat, double longi); 
     };
 }
 

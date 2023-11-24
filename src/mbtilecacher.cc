@@ -43,5 +43,12 @@ namespace mbtile
         }
         return check;
     }
+
+    std::optional<mbtile::tile_t> MbTileCacher::fetch_mb_tile(std::size_t zoomlevel, std::size_t x,std::size_t y)
+    {
+        return lrucache_.get(std::to_string(zoomlevel)+"/"+
+                    std::to_string(x)+"/"+
+                    std::to_string(y));
+    }
 }
 

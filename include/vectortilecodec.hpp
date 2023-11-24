@@ -5,14 +5,18 @@
 #include <vector_tile.pb.h>
 /// @brief  Scope
 ///       - 
-class VectorTileCodec:std::enable_shared_from_this<VectorTileCodec>
+
+namespace vector_tile
 {
-    public:
-        VectorTileCodec()=default;
-        ~VectorTileCodec();
-        vector_tile::Tile_Feature Decode(std::string & s);
-        // Not in V0.0 Scope right now
-        // void Encode()
-};
+    class VectorTileCodec:std::enable_shared_from_this<VectorTileCodec>
+    {
+        public:
+            VectorTileCodec();
+            ~VectorTileCodec();
+            vector_tile::Tile_Feature Decode(std::string & s);
+            // Not in V0.0 Scope right now
+            // void Encode()
+    };
+}
 
 #endif //_VECTOR_TILE
