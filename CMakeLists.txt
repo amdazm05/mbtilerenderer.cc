@@ -4,8 +4,8 @@ set(CMAKE_CXX_FLAGS "-std=c++20 -Wno-dev")
 set(proto_path ${CMAKE_SOURCE_DIR}/third-party/vector-tile-spec/2.1/)
 set(destination_dir  ${CMAKE_SOURCE_DIR}/proto/)
 option(PROTO_COMPILE 0)
-include(FindProtobuf)
-
+find_package(protobuf REQUIRED CONFIG)
+include_directories(${protobuf_INCLUDE_DIR})
 if(PROTO_COMPILE)
   execute_process(
       COMMAND protoc vector_tile.proto --proto_path=${proto_path} --cpp_out ${destination_dir}
@@ -28,6 +28,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/include/
 )
 file(GLOB SRC_MB
+${PROJECT_SOURCE_DIR}/proto/*.cc
 ${PROJECT_SOURCE_DIR}/src/*.cpp
 ${PROJECT_SOURCE_DIR}/src/*.cc
 ${PROJECT_SOURCE_DIR}/src/util/*.cpp
@@ -47,7 +48,7 @@ target_link_libraries(mbrenderer
   sqlite3
   pthread
   z
-  ${PROTOBUF_LIBRARIES}
+  protobuf::libprotobuf
 )
 add_executable(mbtiletest ${CMAKE_SOURCE_DIR}/test/mbtilesearchtiletest.cc)
 target_link_libraries(mbtiletest
@@ -67,5 +68,10 @@ target_link_libraries(mbtilecachetest PUBLIC
 
 add_executable(conversiontest ${CMAKE_SOURCE_DIR}/test/conversiontest.cc)
 target_link_libraries(conversiontest PUBLIC
+  mbrenderer
+)
+
+add_executable(vectortiletest ${CMAKE_SOURCE_DIR}/test/vectortiletest.cc)
+target_link_libraries(vectortiletest PUBLIC
   mbrenderer
 )
