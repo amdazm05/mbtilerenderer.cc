@@ -8,6 +8,12 @@
 
 namespace vector_tile
 {
+    enum class CommandIntegers : uint32_t
+    {
+        MOVE_TO    = 1,
+        LINE_TO    = 2,
+        CLOSE_PATH = 7
+    };
     class VectorTileCodec:std::enable_shared_from_this<VectorTileCodec>
     {
         public:
