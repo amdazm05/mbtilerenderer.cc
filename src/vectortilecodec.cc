@@ -10,7 +10,8 @@ namespace vector_tile
     {
 
     }
-    vector_tile::Tile_Feature VectorTileCodec::Decode(std::string & s)
+    vector_tile::Tile_Feature VectorTileCodec::Decode(std::size_t zoom,
+        std::size_t column,std::size_t row ,std::string & s)
     {
         vector_tile::Tile tileData;
         bool check = tileData.ParseFromString(s);
@@ -57,7 +58,6 @@ namespace vector_tile
                         default:
                             // Do nothing corrupted tile
                             break;
-
                     }
                 }
 
