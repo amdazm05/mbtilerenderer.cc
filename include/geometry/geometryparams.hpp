@@ -48,6 +48,14 @@ namespace geometry
         _mm_storeu_ps(resf,_mm_mul_ps(_mm_sub_ps(a,origin),b));
         return resf[0]-resf[1];
     }    
+    inline float cross_product_2D(std::pair<float,float> origin,std::pair<float,float> &a,std::pair<float,float> &b)
+    {
+        a.x = a.x-origin.x;
+        a.y = a.y-origin.y;
+        b.x = b.x-origin.x;
+        b.y = b.y-origin.y;
+        return (a.x*b.y) - (a.y*b.x);
+    }     
     template<typename T>
     Winding CheckWindingOrderAVX(geometry::vertice_vector_2D<T> & points)
     {
@@ -61,6 +69,24 @@ namespace geometry
             __m128 currPoint  = COORDINATES(points[i].x,points[i].y);
             __m128 nextPoint  = COORDINATES(points[nextIndex].x,points[nextIndex].y);
             winding += cross_product_2D_AVX(origin,currPoint,nextPoint);
+        }
+        return winding<0?Winding::CLOCK_WISE:Winding::COUNTER_CLOCK_WISE;
+    }
+
+    template<typename T>
+    Winding CheckWindingOrder(geometry::vertice_vector_2D<T> & points)
+    {
+        std::size_t n = points.size();
+        if(n<2) throw std::runtime_error("Winding Order: Cannot compute winding order, there must be atleast 2 points");
+        std::pair<float,float> origin=points[0];
+        double winding = 0;
+        #pragma unroll
+        for(std::size_t i=0;i<n;i++)
+        {
+            std::size_t nextIndex = (i+1)%n;
+            std::pair<float,float> currPoint  = points[i];
+            std::pair<float,float> nextPoint  = points[nextIndex];
+            winding += cross_product_2D(origin,currPoint,nextPoint);
         }
         return winding<0?Winding::CLOCK_WISE:Winding::COUNTER_CLOCK_WISE;
     }
