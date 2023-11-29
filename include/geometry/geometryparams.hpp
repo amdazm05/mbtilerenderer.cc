@@ -1,6 +1,16 @@
 #ifndef _GEOMETRY_PARAMS
 #define _GEOMETRY_PARAMS
 
+#include <immintrin.h>
+#include <type_traits>
+#include <cstdint>
+#include <vector>
+#include <stdexcept>
+
+#define COORDINATES(x,y) _mm_set_ps(0,0,y,x)
+#define x first
+#define y second
+
 namespace geometry
 {
     template<typename T>
@@ -28,7 +38,32 @@ namespace geometry
         //Accumulate cross products
         // if cummulative +ve then proceed as cclock
         // if cummulative -ve then proceed as clock
+        return {};
     }                       
+    inline float cross_product_2D_AVX(__m128 &origin,__m128 &a,__m128 &b)
+    {
+        float resf[4];
+        b = _mm_sub_ps(b,origin);
+        b = _mm_shuffle_ps(b,b,_MM_SHUFFLE(2,3,0,1));
+        _mm_storeu_ps(resf,_mm_mul_ps(_mm_sub_ps(a,origin),b));
+        return resf[0]-resf[1];
+    }    
+    template<typename T>
+    Winding CheckWindingOrderAVX(geometry::vertice_vector_2D<T> & points)
+    {
+        std::size_t n = points.size();
+        if(n<2) throw std::runtime_error("Winding Order: Cannot compute winding order, there must be atleast 2 points");
+        __m128 origin  = COORDINATES(points[0].x,points[0].y);
+        double winding = 0;
+        for(std::size_t i=0;i<n;i++)
+        {
+            std::size_t nextIndex = (i+1)%n;
+            __m128 currPoint  = COORDINATES(points[i].x,points[i].y);
+            __m128 nextPoint  = COORDINATES(points[nextIndex].x,points[nextIndex].y);
+            winding += cross_product_2D_AVX(origin,currPoint,nextPoint);
+        }
+        return winding<0?Winding::CLOCK_WISE:Winding::COUNTER_CLOCK_WISE;
+    }
 }
 
 #endif //_GEOMETRY_PARAMS

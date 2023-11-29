@@ -30,7 +30,7 @@ namespace vector_tile
         public:
             VectorTileCodec();
             ~VectorTileCodec();
-            vector_tile::Tile_Feature VectorTileCodec::Decode(std::size_t zoom,
+            vector_tile::Tile_Feature Decode(std::size_t zoom,
                 std::size_t column,std::size_t row ,std::string & s);
             // Not in V0.0 Scope right now
             ///@brief Future work 

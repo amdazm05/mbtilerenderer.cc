@@ -75,3 +75,8 @@ add_executable(vectortiletest ${CMAKE_SOURCE_DIR}/test/vectortiletest.cc)
 target_link_libraries(vectortiletest PUBLIC
   mbrenderer
 )
+
+add_executable(geometrytest ${CMAKE_SOURCE_DIR}/test/geometry.cc)
+target_link_libraries(geometrytest PUBLIC
+  mbrenderer
+)

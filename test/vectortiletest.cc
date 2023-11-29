@@ -11,7 +11,7 @@ int main()
         std:: cout<<"QUERY PASSED";
         mbtile::tile_t t;
         std::string s = (cacher.fetch_mb_tile(14,(std::size_t)11481,(std::size_t)9827).value_or(t).pbtile);
-        codec.Decode(s);
+        codec.Decode(14,(std::size_t)11481,(std::size_t)9827,s);
     }   
     else
     {
