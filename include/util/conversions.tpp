@@ -10,13 +10,13 @@
 namespace utils
 {
     template<typename T>
-    inline std::pair<T,T> tile_to_latlong(int zoom, T x,T y)
+    inline std::pair<double,double> tile_to_latlong(int zoom, T x,T y)
     {
         int ni = (1<<zoom);
         double n= (double)ni;
         double ng = std::numbers::pi - 2.0 * std::numbers::pi * y / (n);
-        T longi   =  (x/n)*((T)360) -180;
-        T lat = 180.0 / std::numbers::pi * atan(0.5 * (exp(ng) - exp(-ng)));
+        double longi = x / n * 360.0 - 180;
+        double lat = 180.0 / std::numbers::pi * atan(0.5 * (exp(ng) - exp(-ng)));
         return {lat,longi};
     }
 
