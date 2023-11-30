@@ -32,14 +32,7 @@ namespace geometry
     // Winding algo -->  O(n)
     // https://docs.mapbox.com/data/tilesets/guides/vector-tiles-standards/
     // https://www.cuemath.com/geometry/cross-product/
-    template<typename T>
-    Winding CheckWindingOrder(geometry::vertice_vector_2D<T> & points)
-    {
-        //Accumulate cross products
-        // if cummulative +ve then proceed as cclock
-        // if cummulative -ve then proceed as clock
-        return {};
-    }                       
+                       
     inline float cross_product_2D_AVX(__m128 &origin,__m128 &a,__m128 &b)
     {
         float resf[4];

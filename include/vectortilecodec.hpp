@@ -20,13 +20,13 @@ namespace vector_tile
     {
         private: 
             //min , max 
-            std::pair<int,int> longextents_;
-            std::pair<int,int> latextents_;
+            std::pair<double,double> maxlonglatextents_;
+            std::pair<double,double> minlonglatextents_;
             // difflat difflong
-            std::pair<int,int> diffLatLong_;
-            std::vector<geometry::vertice_2D<int>> points_;
-            std::vector<geometry::vertice_vector_2D<int>> lines_;
-            std::vector<geometry::polygon_2D_dual_rings<int>> polygons_;
+            std::pair<double,double> diffboundslatlong_;
+            std::vector<geometry::vertice_2D<double>> points_;
+            std::vector<geometry::vertice_vector_2D<double>> lines_;
+            std::vector<geometry::polygon_2D_dual_rings<double>> polygons_;
         public:
             VectorTileCodec();
             ~VectorTileCodec();
