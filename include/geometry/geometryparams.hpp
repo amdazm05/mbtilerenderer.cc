@@ -20,7 +20,7 @@ namespace geometry
     ///@brief An exterior ring is DEFINED as a linear ring having a positive area as calculated by applying the surveyor's formula
     // An exterior ring is DEFINED as a linear ring having a positive area as calculated by applying the surveyor's formula
     template<typename T>
-    using polygon_2D_dual_rings = std::pair<std::vector<vertice_vector_2D<T>>,
+    using polygon_2D_dual_rings = std::pair<vertice_vector_2D<T>,
         std::vector<vertice_vector_2D<T>>>;
 
     enum class Winding : uint32_t
@@ -50,7 +50,7 @@ namespace geometry
         return (a.x*b.y) - (a.y*b.x);
     }     
     template<typename T>
-    Winding CheckWindingOrderAVX(geometry::vertice_vector_2D<T> & points)
+    Winding CheckWindingOrderAVX(std::vector<geometry::vertice_2D<T>> & points)
     {
         std::size_t n = points.size();
         if(n<2) throw std::runtime_error("Winding Order: Cannot compute winding order, there must be atleast 2 points");
@@ -67,7 +67,7 @@ namespace geometry
     }
 
     template<typename T>
-    Winding CheckWindingOrder(geometry::vertice_vector_2D<T> & points)
+    Winding CheckWindingOrder(std::vector<geometry::vertice_2D<T>> & points)
     {
         std::size_t n = points.size();
         if(n<2) throw std::runtime_error("Winding Order: Cannot compute winding order, there must be atleast 2 points");
