@@ -12,6 +12,7 @@ namespace vector_tile
 {
     enum class CommandIntegers : uint32_t
     {
+        NONE       = 0,
         MOVE_TO    = 1,
         LINE_TO    = 2,
         CLOSE_PATH = 7
@@ -25,8 +26,10 @@ namespace vector_tile
             // difflat difflong
             std::pair<double,double> diffboundslatlong_;
             std::vector<geometry::vertice_2D<double>> points_;
+            std::vector<geometry::vertice_2D<int>> points_tilecoords_;
             std::vector<geometry::vertice_vector_2D<double>> lines_;
             std::vector<geometry::polygon_2D_dual_rings<double>> polygons_;
+            geometry::polygon_2D_dual_rings<double> currpolygons_;
         public:
             VectorTileCodec();
             ~VectorTileCodec();

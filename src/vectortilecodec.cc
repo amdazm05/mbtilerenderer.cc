@@ -24,8 +24,9 @@ namespace vector_tile
         diffboundslatlong_.first  = minlonglatextents_.first - minlonglatextents_.first;
         diffboundslatlong_.second = maxlonglatextents_.second - maxlonglatextents_.second;  
         std::pair<int,int> cursor_p={0,0};
+        std::pair<double,double> prevpxy={0,0};
         std::size_t layer_count = tileData.layers_size();
-
+        bool is_current_polygon_set = false;
         for(std::size_t layerIndex = 0;layerIndex<tileData.layers_size();layerIndex++)
         {
             // version of tile should be consistent do not proceed if otherwise or skip the tile if needed 
@@ -53,6 +54,7 @@ namespace vector_tile
                     // line to    2
                     // close path 7
                     CommandIntegers id = (CommandIntegers)(geometry & 0x7);
+                    CommandIntegers previd = CommandIntegers::NONE;
                     uint32_t commandCount = geometry >>3;
                     auto featuretype = feature.type(); 
                     // (cX, cY) where cX is the position of the cursor on the X axis and cY
@@ -66,7 +68,7 @@ namespace vector_tile
                         for(std::size_t i=0;i<commandCount;i++)
                         {
                             //https://github.com/mapbox/vector-tile-spec/tree/master/2.1#432-parameter-integers
-                            if(i+2>feature.geometry_size()) break;
+                            if(geometryIndex+2>feature.geometry_size()) break;
                             uint32_t  value1 = feature.geometry(geometryIndex+1);
                             uint32_t  value2 = feature.geometry(geometryIndex+2);
                             
@@ -85,15 +87,70 @@ namespace vector_tile
                             
                             if(featuretype==vector_tile::Tile_GeomType_POINT)
                                 points_.push_back(point);
+                            if(featuretype==vector_tile::Tile_GeomType_LINESTRING && points_.size()>0)
+                            {
+                                //Makes the moves into a line
+                                lines_.push_back(points_);
+                                points_.clear();
+                            }
                             geometryIndex+=2;
+                            previd = CommandIntegers::MOVE_TO;
                         }
                         break;
                         case CommandIntegers::LINE_TO: 
                             for(std::size_t i=0;i<commandCount;i++)
-                            //Iterators
+                            {
+                                if(geometryIndex+2>feature.geometry_size()) break;
+                                if(previd != CommandIntegers::LINE_TO)
+                                {
+                                    points_.push_back(prevpxy);
+                                }
+                                uint32_t  value1 = feature.geometry(geometryIndex+1);
+                                uint32_t  value2 = feature.geometry(geometryIndex+2);
+                                
+                                // A ParameterInteger is zigzag encoded so that small negative and positive values are both encoded as small integers
+                                int32_t parameterInteger1 =  (value1 << 1) ^ (value1>> 31);
+                                int32_t parameterInteger2 =  (value2 << 1) ^ (value2>> 31);
+
+                                //dx, dy are parameters 1 and 2 
+                                cursor_p.x+=parameterInteger1;
+                                cursor_p.y+=parameterInteger2;
+                                std::pair<double,double> point = 
+                                {
+                                    diffboundslatlong_.second * double(cursor_p.x) / double(extent) + minlonglatextents_.second,
+                                    diffboundslatlong_.first * double(cursor_p.y) / double(extent) + minlonglatextents_.first
+                                };
+                                points_.push_back(point);
                                 geometryIndex+=2;
+                                previd = CommandIntegers::LINE_TO;
+                            }
                         break;
                         case CommandIntegers::CLOSE_PATH:
+                            for(std::size_t i=0;i<commandCount;i++)
+                            {
+                                if(featuretype==vector_tile::Tile_GeomType_POLYGON)
+                                {
+                                    geometry::Winding winding_number = geometry::CheckWindingOrder(points_);
+                                    switch (winding_number)
+                                    {
+                                        case geometry::Winding::COUNTER_CLOCK_WISE:
+                                            if(is_current_polygon_set)
+                                            {
+                                                polygons_.push_back(currpolygons_);
+                                                currpolygons_.first.clear();
+                                            }
+                                            currpolygons_.first = points_; //outer shape
+						                    is_current_polygon_set = true;
+                                            break;
+                                        case geometry::Winding::CLOCK_WISE:
+                                            currpolygons_.second.push_back(points_);
+                                            break;
+                                    }
+                                    points_.clear();
+                                    previd = CommandIntegers::CLOSE_PATH;
+                                }
+                            
+                            }
                         break; 
                         default:
                             // Do nothing corrupted tile
@@ -103,7 +160,8 @@ namespace vector_tile
 
             }
         }
-
+        std::cout<<"Size of Polygons Shapes: "<<polygons_.size()<<"\n"
+                 <<"Size of Line Shapes: "<<lines_.size()<<std::endl;
         return {};
     }
 
