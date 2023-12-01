@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::string path = "./sample/countries-raster.mbtiles";
+    std::string path = "./sample/islamabad.mbtiles";
     std::string query = "SELECT tile_data FROM tiles WHERE zoom_level = 1 AND  tile_column = 0 AND tile_row = 1;";
     try
     {
@@ -19,7 +19,7 @@ int main()
             data = (char *)statement.getColumn(0).getBlob();
             int len = statement.getColumn(0).getBytes();
             std::stringstream st;
-            st<<"tile.png";
+            st<<"tile_data.pbf";
             std::fstream file(st.str(),std::ios::binary| std::ios::trunc|std::ios::in|std::ios::out);
             file.write((char *)data,len);
             file.flush();

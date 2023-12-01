@@ -11,12 +11,12 @@ namespace mbtile
     {
 
     }
-    bool MbTileCacher::query_tile(std::size_t zoomlevel,std::size_t row,std::size_t column)
+    bool MbTileCacher::query_tile(std::size_t zoomlevel,std::size_t column,std::size_t row)
     {
         std::string query = "SELECT tile_data FROM tiles WHERE zoom_level ="+ 
                 std::to_string(zoomlevel) + " AND  tile_column =" 
-                +std::to_string(row)+ " AND tile_row ="
-                +std::to_string(column)+";";
+                +std::to_string(column)+ " AND tile_row ="
+                +std::to_string(row)+";";
         bool check = false;
         try
         {
@@ -32,8 +32,8 @@ namespace mbtile
                 tile.pbtile = std::move(result);
                 //Caches the tiles
                 lrucache_.add(std::to_string(zoomlevel)+"/"+
-                    std::to_string(row)+"/"+
-                    std::to_string(column),std::move(tile));
+                    std::to_string(column)+"/"+
+                    std::to_string(row),std::move(tile));
                 check = true;
             }
         }
@@ -44,11 +44,11 @@ namespace mbtile
         return check;
     }
 
-    std::optional<mbtile::tile_t> MbTileCacher::fetch_mb_tile(std::size_t zoomlevel, std::size_t x,std::size_t y)
+    std::optional<mbtile::tile_t> MbTileCacher::fetch_mb_tile(std::size_t zoomlevel, std::size_t column,std::size_t row)
     {
         return lrucache_.get(std::to_string(zoomlevel)+"/"+
-                    std::to_string(x)+"/"+
-                    std::to_string(y));
+                    std::to_string(column)+"/"+
+                    std::to_string(row));
     }
 }
 

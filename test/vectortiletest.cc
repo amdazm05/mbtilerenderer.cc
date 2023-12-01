@@ -9,12 +9,16 @@ int main()
     try
     {
         {
-            if(cacher.query_tile(14,11481,9827))
+            int zoom = 3;
+            int column = 5 ;
+            int row  = 4 ;
+            bool queryres =cacher.query_tile(zoom,column,row);
+            if(queryres)
             {
                 std:: cout<<"QUERY PASSED"<<std::endl;
                 mbtile::tile_t t;
-                std::string s = (cacher.fetch_mb_tile(14,(std::size_t)11481,(std::size_t)9827).value_or(t).pbtile);
-                codec.Decode(14,(std::size_t)11481,(std::size_t)9827,s);
+                std::string s = (cacher.fetch_mb_tile(zoom,(std::size_t)column,(std::size_t)row).value_or(t).pbtile);
+                codec.Decode(zoom,(std::size_t)column,(std::size_t)row,s);
             }   
             else
             {
