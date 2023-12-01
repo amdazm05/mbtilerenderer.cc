@@ -10,7 +10,7 @@ namespace vector_tile
     {
 
     }
-    vector_tile::Tile_Feature VectorTileCodec::Decode(std::size_t zoom,
+    void VectorTileCodec::Decode(std::size_t zoom,
         std::size_t column,std::size_t row ,std::string & s)
     {
         vector_tile::Tile tileData;
@@ -19,10 +19,10 @@ namespace vector_tile
             throw std::runtime_error("VectorTileCodec: Tile Parsing Failed ");
         
         uint32_t tile_count = 1<<zoom;
-        minlonglatextents_ = utils::tile_to_latlong(row+1,column, zoom);
-        maxlonglatextents_ = utils::tile_to_latlong(row,column+1, zoom);
-        diffboundslatlong_.first  = minlonglatextents_.first - minlonglatextents_.first;
-        diffboundslatlong_.second = maxlonglatextents_.second - maxlonglatextents_.second;  
+        minlonglatextents_ = utils::tile_to_latlong((int)zoom,(int)row+1,(int)column);
+        maxlonglatextents_ = utils::tile_to_latlong((int)zoom,(int)row,(int)column+1);
+        diffboundslatlong_.first  = maxlonglatextents_.first - minlonglatextents_.first;
+        diffboundslatlong_.second = maxlonglatextents_.second - minlonglatextents_.second;  
         std::pair<int,int> cursor_p={0,0};
         std::pair<double,double> prevpxy={0,0};
         std::size_t layer_count = tileData.layers_size();
@@ -34,9 +34,11 @@ namespace vector_tile
             // Layer names must not be identical, byte by byte comparison
             auto & layer = tileData.layers(layerIndex);
             uint32_t extent = layer.extent(); 
+            std::cout<<"Layer : - >"<<layer.name()<<std::endl;
             for(std::size_t featureIndex = 0;featureIndex<layer.features_size();featureIndex++)
             {
                 auto feature = layer.features(featureIndex);
+                std::cout<<"feature id : "<<feature.id()<<" geometry size : "<<feature.geometry_size()<<std::endl;
                 // Each feature in a layer (see below) may have one or more key-value pairs as its metadata.
                 //  The set of keys SHOULD NOT contain two or more values which are byte-for-byte identical.
 
@@ -69,16 +71,16 @@ namespace vector_tile
                         {
                             //https://github.com/mapbox/vector-tile-spec/tree/master/2.1#432-parameter-integers
                             if(geometryIndex+2>feature.geometry_size()) break;
-                            uint32_t  value1 = feature.geometry(geometryIndex+1);
-                            uint32_t  value2 = feature.geometry(geometryIndex+2);
+                            uint32_t  parameterInteger1 = feature.geometry(geometryIndex+1);
+                            uint32_t  parameterInteger2 = feature.geometry(geometryIndex+2);
                             
                             // A ParameterInteger is zigzag encoded so that small negative and positive values are both encoded as small integers
-                            int32_t parameterInteger1 =  (value1 << 1) ^ (value1>> 31);
-                            int32_t parameterInteger2 =  (value2 << 1) ^ (value2>> 31);
+                            int32_t value1 =  (((int)parameterInteger1 >> 1) ^ (-((int)parameterInteger1 & 1)));
+                            int32_t value2 =  (((int)parameterInteger2 >> 1) ^ (-((int)parameterInteger2 & 1)));
 
-                            //dx, dy are parameters 1 and 2 
-                            cursor_p.x+=parameterInteger1;
-                            cursor_p.y+=parameterInteger2;
+                            //dx, dy are parameters 1 and 2 `
+                            cursor_p.x+=value1;
+                            cursor_p.y+=value2;
                             std::pair<double,double> point = 
                             {
                                 diffboundslatlong_.second * double(cursor_p.x) / double(extent) + minlonglatextents_.second,
@@ -105,16 +107,12 @@ namespace vector_tile
                                 {
                                     points_.push_back(prevpxy);
                                 }
-                                uint32_t  value1 = feature.geometry(geometryIndex+1);
-                                uint32_t  value2 = feature.geometry(geometryIndex+2);
-                                
-                                // A ParameterInteger is zigzag encoded so that small negative and positive values are both encoded as small integers
-                                int32_t parameterInteger1 =  (value1 << 1) ^ (value1>> 31);
-                                int32_t parameterInteger2 =  (value2 << 1) ^ (value2>> 31);
-
-                                //dx, dy are parameters 1 and 2 
-                                cursor_p.x+=parameterInteger1;
-                                cursor_p.y+=parameterInteger2;
+                                uint32_t  parameterInteger1 = feature.geometry(geometryIndex+1);
+                                uint32_t  parameterInteger2 = feature.geometry(geometryIndex+2);
+                                int32_t value1 =  ((parameterInteger1 >> 1) ^ (-(parameterInteger1 & 1)));
+                                int32_t value2 =  ((parameterInteger2 >> 1) ^ (-(parameterInteger2 & 1)));
+                                cursor_p.x+=value1;
+                                cursor_p.y+=value2;
                                 std::pair<double,double> point = 
                                 {
                                     diffboundslatlong_.second * double(cursor_p.x) / double(extent) + minlonglatextents_.second,
@@ -157,12 +155,12 @@ namespace vector_tile
                             break;
                     }
                 }
-
+                //refill
+                polygons_.clear();
+                points_.clear();
+                lines_.clear();
             }
         }
-        std::cout<<"Size of Polygons Shapes: "<<polygons_.size()<<"\n"
-                 <<"Size of Line Shapes: "<<lines_.size()<<std::endl;
-        return {};
     }
 
 }
