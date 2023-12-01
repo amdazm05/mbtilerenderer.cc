@@ -4,7 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <numbers>
-
+#define M_PI_CONV  3.14159265358979323846f
 // References here
 //https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
 namespace utils
@@ -12,11 +12,10 @@ namespace utils
     template<typename T>
     inline std::pair<double,double> tile_to_latlong(int zoom, T x,T y)
     {
-        int ni = (1<<zoom);
-        double n= (double)ni;
-        double ng = std::numbers::pi - 2.0 * std::numbers::pi * y / (n);
-        double longi = x / n * 360.0 - 180;
-        double lat = 180.0 / std::numbers::pi * atan(0.5 * (exp(ng) - exp(-ng)));
+        double longi = y / (double)(1 << zoom) * 360.0 - 180;
+        x = (1 << zoom) - x - 1;
+        double nx = M_PI_CONV *(1 - 2.0* x / (double)(1 << zoom));
+	    double lat = 180.0 / M_PI_CONV * atan(sinh(nx));
         return {lat,longi};
     }
 
@@ -25,9 +24,9 @@ namespace utils
     {
         int ni = (1<<zoom);
         double n= (double)ni;
-        lat   = lat * (std::numbers::pi/180);
+        lat   = lat * (M_PI_CONV/180);
         int x = ((longi +180)/(360))*n;
-        int y = (int)(floor((1.0 - asinh(tan(lat)) / std::numbers::pi) / 2.0 * n));
+        int y = (int)(floor((1.0 - asinh(tan(lat)) / M_PI_CONV) / 2.0 * n));
         return {x,y};
     }
 
