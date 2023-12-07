@@ -23,8 +23,7 @@ namespace vector_tile
         maxlonglatextents_ = utils::tile_to_latlong((int)zoom,(int)row,(int)column+1);
         diffboundslatlong_.first  = maxlonglatextents_.first - minlonglatextents_.first;
         diffboundslatlong_.second = maxlonglatextents_.second - minlonglatextents_.second;  
-        std::pair<int,int> cursor_p={0,0};
-        std::pair<double,double> prevpxy={0,0};
+        
         std::size_t layer_count = tileData.layers_size();
         bool is_current_polygon_set = false;
         for(std::size_t layerIndex = 0;layerIndex<tileData.layers_size();layerIndex++)
@@ -46,7 +45,8 @@ namespace vector_tile
                 // A feature MUST contain a type field as described in the Geometry Types section.
                 // A feature MAY contain a tags field. Feature-level metadata, if any, SHOULD be stored in the tags field.
                 // A feature MAY contain an id field. If a feature has an id field, the value of the id SHOULD be unique among the features of the parent layer.
-                
+                std::pair<int,int> cursor_p={0,0};
+                std::pair<double,double> prevpxy={0,0};
                 for(std::size_t geometryIndex = 0;geometryIndex<feature.geometry_size();geometryIndex++)
                 {
                     // geometry field of a feature. Each integer is either a CommandInteger or a ParameterInteger
@@ -82,9 +82,9 @@ namespace vector_tile
                             cursor_p.x+=value1;
                             cursor_p.y+=value2;
                             std::pair<double,double> point = 
-                            {
-                                diffboundslatlong_.second * double(cursor_p.x) / double(extent) + minlonglatextents_.second,
-                                diffboundslatlong_.first * double(cursor_p.y) / double(extent) + minlonglatextents_.first
+                            { 
+                               double(cursor_p.x),
+                               double(cursor_p.y)
                             };
                             
                             if(featuretype==vector_tile::Tile_GeomType_POINT)
@@ -115,8 +115,8 @@ namespace vector_tile
                                 cursor_p.y+=value2;
                                 std::pair<double,double> point = 
                                 {
-                                    diffboundslatlong_.second * double(cursor_p.x) / double(extent) + minlonglatextents_.second,
-                                    diffboundslatlong_.first * double(cursor_p.y) / double(extent) + minlonglatextents_.first
+                                    double(cursor_p.x), 
+                                    double(cursor_p.y) 
                                 };
                                 points_.push_back(point);
                                 geometryIndex+=2;
@@ -155,7 +155,6 @@ namespace vector_tile
                             break;
                     }
                 }
-                //refill
                 polygons_.clear();
                 points_.clear();
                 lines_.clear();
